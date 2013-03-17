@@ -1,14 +1,18 @@
 ;(function($){
 	$.fn.groupIndex=function(options){
 		var opts=$.extend({},$.fn.groupIndex.defaults,options);
-		var _index=0,_c,_this;
+		var _index=0,_c,_this,ie7Bol=false;
 		return this.each(function(){
 				_this=$(this).bind(opts.bindType,thisClick);
 				_c=_this.children(); 
-				if(opts.initEmabledBol==true&&opts.initIndex!=-1){
-					_index=opts.initIndex;
-					opts.callBack(_index);
-					_c.eq(_index).addClass(opts.emabledClass);
+				if(opts.initIndex!=-1){
+					if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/7./i)=="7.")  
+					{ 
+						ie7Bol=true;
+					}
+					_index=opts.initIndex;	
+					//getIndex(_c.eq(!ie7Bol?_index:_index+1));
+					getIndex(_c.eq(_index));
 				}
 		});
 		function thisClick(e){
@@ -22,11 +26,13 @@
 				getTarget(t.parent());
 			}else{
 				getIndex(t);
+				
 			}
 		};
 		function getIndex(t){
 			var $target =$(t);	
 			_index=_c.index( $target );
+			//opts.callBack(!ie7Bol?_index:_index-1,$target);
 			opts.callBack(_index,$target);
 			if(opts.emabledBol==true)$target.addClass(opts.emabledClass);
 		};	
@@ -34,9 +40,8 @@
 	$.fn.groupIndex.defaults={
 		bindType:'click',
 		callBack:function(){},
-		emabledBol:false,
+		emabledBol:true,
 		emabledClass:'',
-		initEmabledBol:false,
-		initIndex:-1	
+		initIndex:0	
 	};
 })(jQuery);
